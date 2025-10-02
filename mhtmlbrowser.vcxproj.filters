@@ -65,6 +65,9 @@
     <ClCompile Include="webview.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="emptyfoldersfilesystemmodel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="browser.h">
@@ -125,5 +128,10 @@
     <None Include="data\3rdparty\view-refresh.png">
       <Filter>Resource Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="emptyfoldersfilesystemmodel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>

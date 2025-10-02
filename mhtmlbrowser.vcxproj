@@ -203,6 +203,7 @@
   <ItemGroup>
     <ClCompile Include="browser.cpp" />
     <ClCompile Include="browserwindow.cpp" />
+    <ClCompile Include="emptyfoldersfilesystemmodel.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="tabwidget.cpp" />
     <ClCompile Include="webpage.cpp" />
@@ -210,6 +211,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="browser.h" />
+    <QtMoc Include="emptyfoldersfilesystemmodel.h" />
     <QtMoc Include="browserwindow.h">
     </QtMoc>
     <QtMoc Include="tabwidget.h">

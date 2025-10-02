@@ -28,6 +28,8 @@
 #include <QSettings>
 #include <QTimer>
 
+#include "EmptyFoldersFileSystemModel.h"
+
 BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile, bool forDevTools)
     : m_browser(browser)
     , m_profile(profile)
@@ -72,7 +74,7 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile, bool 
 	addDockWidget(Qt::LeftDockWidgetArea, m_sidebarDock);
 	
 	// Настройка модели для дерева файлов
-	m_categoriesModel = new QFileSystemModel(this);
+	m_categoriesModel = new EmptyFoldersFileSystemModel(this);
 	m_categoriesModel->setRootPath(QDir::homePath());
 	m_categoriesModel->setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
 	
@@ -656,7 +658,7 @@ void BrowserWindow::moveCurrentArticle()
 
 	if (QFile::rename(currentArticle, newPath)) {
 		// Загружаем следующую статью
-		loadNextUncategorizedArticle();
+		loadNextUnprocessedFile();
 	}
 	else {
 		QMessageBox::warning(this, tr("Error"),
@@ -701,11 +703,6 @@ QString BrowserWindow::findNextUnprocessedFile()
 	return QString(); // Файлов не найдено
 }
 
-
-void BrowserWindow::loadNextUncategorizedArticle()
-{
-}
-
 void BrowserWindow::selectSourceFolder()
 {
 	QString initialPath = m_sourceFolder.isEmpty() ? QDir::homePath() : m_sourceFolder;
@@ -724,7 +721,7 @@ void BrowserWindow::selectSourceFolder()
 		updateWindowTitle();
 
 		// Можно сразу загрузить первую статью из папки
-		loadFirstArticleFromFolder();
+		loadNextUnprocessedFile();
 
 		QMessageBox::information(this,
 			tr("Source Folder Selected"),
@@ -742,33 +739,10 @@ void BrowserWindow::updateWindowTitle()
 	setWindowTitle(title);
 }
 
-void BrowserWindow::loadFirstArticleFromFolder()
-{
-	if (m_sourceFolder.isEmpty()) return;
-
-	QDir sourceDir(m_sourceFolder);
-
-	// Ищем MHTML файлы
-	QStringList mhtmlFiles = sourceDir.entryList(QStringList() << "*.mhtml" << "*.mht",
-		QDir::Files,
-		QDir::Name);
-
-	if (!mhtmlFiles.isEmpty()) {
-		QString firstFile = sourceDir.absoluteFilePath(mhtmlFiles.first());
-		loadMhtmlFile(firstFile);
-	}
-	else {
-		QMessageBox::information(this,
-			tr("No MHTML Files"),
-			tr("No MHTML files found in the selected folder."));
-	}
-}
-
 void BrowserWindow::loadMhtmlFile(const QString &filePath)
 {
 	if (!QFile::exists(filePath)) {
-		QMessageBox::warning(this, tr("File Not Found"),
-			tr("File not found: %1").arg(filePath));
+		statusBar()->showMessage(tr("File not found: %1").arg(filePath));
 		return;
 	}
 
@@ -835,7 +809,7 @@ void BrowserWindow::readSettings()
 
 	if (!m_sourceFolder.isEmpty()) {
 		updateWindowTitle();
-		QTimer::singleShot(100, this, &BrowserWindow::loadFirstArticleFromFolder);
+		QTimer::singleShot(100, this, &BrowserWindow::loadNextUnprocessedFile);
 	}
 
 	// Восстанавливаем корневую папку категорий

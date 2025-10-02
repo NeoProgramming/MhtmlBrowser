@@ -59,10 +59,8 @@ private:
     QMenu *createHelpMenu();
     QToolBar *createToolBar();
 	QString getCurrentArticlePath() const;
-	void loadNextUncategorizedArticle();
 	void loadNextUnprocessedFile();
 	QString findNextUnprocessedFile();
-	void loadFirstArticleFromFolder();
 	void loadMhtmlFile(const QString &filePath);
 	void setCategoriesRootPath(const QString &path);
 	void readSettings();
