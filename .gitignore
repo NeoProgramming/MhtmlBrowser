@@ -1,3 +1,9 @@
+.vs
+debug
+release
+*.lastbuildstate
+*.tlog
+
 # Prerequisites
 *.d
 
@@ -39,3 +45,6 @@
 
 # debug information files
 *.dwo
+
+*.stash
+/*.user
