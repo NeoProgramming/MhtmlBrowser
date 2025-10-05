@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = simplebrowser
+TARGET = mhtmlbrowser
 QT += webenginewidgets
 
 HEADERS += \
@@ -29,8 +29,4 @@ FORMS += \
     downloadmanagerwidget.ui \
     downloadwidget.ui
 
-RESOURCES += data/simplebrowser.qrc
-
-# install
-target.path = $$[QT_INSTALL_EXAMPLES]/webenginewidgets/simplebrowser
-INSTALLS += target
+RESOURCES += data/mhtmlbrowser.qrc

@@ -55,13 +55,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>debug\</OutDir>
     <IntDir>debug\</IntDir>
-    <TargetName>simplebrowser</TargetName>
+    <TargetName>mhtmlbrowser</TargetName>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>release\</OutDir>
     <IntDir>release\</IntDir>
-    <TargetName>simplebrowser</TargetName>
+    <TargetName>mhtmlbrowser</TargetName>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
@@ -106,7 +106,7 @@
       <IgnoreImportLibrary>true</IgnoreImportLibrary>
       <LinkIncremental>false</LinkIncremental>
       <OptimizeReferences>true</OptimizeReferences>
-      <OutputFile>$(OutDir)\simplebrowser.exe</OutputFile>
+      <OutputFile>$(OutDir)\mhtmlbrowser.exe</OutputFile>
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <SubSystem>Windows</SubSystem>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -139,6 +139,12 @@
       <QtUicDir>$(ProjectDir)</QtUicDir>
       <QtUicFileName>ui_%(Filename).h</QtUicFileName>
     </QtUic>
+    <PostBuildEvent>
+      <Command>copy $(TargetPath) E:\MySoft\_Files\MhtmlBrowser\mhtmlbrowser.exe</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>copying release exe...</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -166,7 +172,7 @@
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreImportLibrary>true</IgnoreImportLibrary>
-      <OutputFile>$(OutDir)\simplebrowser.exe</OutputFile>
+      <OutputFile>$(OutDir)\mhtmlbrowser.exe</OutputFile>
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <SubSystem>Windows</SubSystem>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -211,6 +217,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="browser.h" />
+    <ClInclude Include="resource.h" />
     <QtMoc Include="emptyfoldersfilesystemmodel.h" />
     <QtMoc Include="browserwindow.h">
     </QtMoc>
@@ -248,10 +255,16 @@
     <None Include="data\3rdparty\go-previous.png" />
     <None Include="data\ninja.png" />
     <None Include="data\3rdparty\process-stop.png" />
-    <QtRcc Include="data\simplebrowser.qrc">
+    <QtRcc Include="data\mhtmlbrowser.qrc">
     </QtRcc>
     <None Include="data\3rdparty\text-html.png" />
     <None Include="data\3rdparty\view-refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="mhtmlbrowser.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\MhtmlBrowser.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -16,6 +16,7 @@ class TabWidget;
 class WebView;
 class QTreeView;
 class QFileSystemModel;
+class QLabel;
 
 class BrowserWindow : public QMainWindow
 {
@@ -78,7 +79,8 @@ private:
     QLineEdit *m_urlLineEdit;
     QAction *m_favAction;
     QString m_lastSearch;
-
+	QLabel *m_labSrc;
+	QLabel *m_labDst;
 	QDockWidget *m_sidebarDock;
 	QTreeView *m_categoryTree;
 	QLineEdit *m_tagsEdit;

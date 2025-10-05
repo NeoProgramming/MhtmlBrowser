@@ -59,8 +59,9 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile, bool 
 	m_tagsEdit = new QLineEdit;
 	m_tagsEdit->setPlaceholderText(tr("Comma-separated tags"));
 
+	sidebarLayout->addWidget(m_labSrc = new QLabel(tr("Src: <NOT SELECTED>")));
 	sidebarLayout->addWidget(moveArticleBtn);
-	sidebarLayout->addWidget(new QLabel(tr("Themes:")));
+	sidebarLayout->addWidget(m_labDst = new QLabel(tr("Dst: <NOT SELECTED>")));
 	sidebarLayout->addWidget(m_categoryTree, 1);
 	sidebarLayout->addWidget(newCategoryBtn);	
 	sidebarLayout->addWidget(new QLabel(tr("Tags:")));
@@ -179,7 +180,8 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile, bool 
 
 	// Загружаем настройки
 	readSettings();
-
+	m_labSrc->setText(m_sourceFolder);
+	m_labDst->setText(m_categoriesRootFolder);
 }
 
 BrowserWindow::~BrowserWindow()
@@ -211,13 +213,13 @@ QMenu *BrowserWindow::createFileMenu(TabWidget *tabWidget)
     fileMenu->addAction(tr("&Open File..."), this, &BrowserWindow::handleFileOpenTriggered, QKeySequence::Open);
 
 	// Action для выбора папки с исходными файлами
-	QAction *openSourceFolderAction = new QAction(tr("&Open Source Folder..."), this);
+	QAction *openSourceFolderAction = new QAction(tr("Select Source Folder..."), this);
 	openSourceFolderAction->setShortcut(tr("Ctrl+O"));
 	connect(openSourceFolderAction, &QAction::triggered, this, &BrowserWindow::selectSourceFolder);
 	fileMenu->addAction(openSourceFolderAction);
 
 	// Action для выбора корневой папки категорий
-	QAction *openCategoriesRootAction = new QAction(tr("Open &Categories Root..."), this);
+	QAction *openCategoriesRootAction = new QAction(tr("Select Categories Root..."), this);
 	openCategoriesRootAction->setShortcut(tr("Ctrl+Shift+O"));
 	connect(openCategoriesRootAction, &QAction::triggered, this, &BrowserWindow::selectCategoriesRootFolder);
 	fileMenu->addAction(openCategoriesRootAction);
@@ -477,9 +479,7 @@ void BrowserWindow::handleWebActionEnabledChanged(QWebEnginePage::WebAction acti
 
 void BrowserWindow::handleWebViewTitleChanged(const QString &title)
 {
-    QString suffix = m_profile->isOffTheRecord()
-        ? tr("Qt Simple Browser (Incognito)")
-        : tr("Qt Simple Browser");
+    QString suffix = tr("MHTML Browser");
 
     if (title.isEmpty())
         setWindowTitle(suffix);
@@ -723,6 +723,8 @@ void BrowserWindow::selectSourceFolder()
 		// Можно сразу загрузить первую статью из папки
 		loadNextUnprocessedFile();
 
+		m_labSrc->setText(m_sourceFolder);
+		
 		QMessageBox::information(this,
 			tr("Source Folder Selected"),
 			tr("Source folder set to: %1").arg(folder));
@@ -774,7 +776,7 @@ void BrowserWindow::selectCategoriesRootFolder()
 
 	if (!folder.isEmpty()) {
 		setCategoriesRootPath(folder);
-
+		
 		QMessageBox::information(this,
 			tr("Categories Root Selected"),
 			tr("Categories root folder set to: %1").arg(folder));
@@ -799,6 +801,8 @@ void BrowserWindow::setCategoriesRootPath(const QString &path)
 
 	// Обновляем статус
 	statusBar()->showMessage(tr("Categories root: %1").arg(path), 3000);
+
+	m_labDst->setText(m_categoriesRootFolder);
 }
 
 void BrowserWindow::readSettings()

@@ -85,6 +85,9 @@
     <QtMoc Include="webview.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <ClInclude Include="resource.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="debug\moc_predefs.h.cbt">
@@ -119,9 +122,6 @@
     <None Include="data\3rdparty\process-stop.png">
       <Filter>Resource Files</Filter>
     </None>
-    <QtRcc Include="data\simplebrowser.qrc">
-      <Filter>Resource Files</Filter>
-    </QtRcc>
     <None Include="data\3rdparty\text-html.png">
       <Filter>Resource Files</Filter>
     </None>
@@ -133,5 +133,16 @@
     <QtMoc Include="emptyfoldersfilesystemmodel.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="data\mhtmlbrowser.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="mhtmlbrowser.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\MhtmlBrowser.ico" />
   </ItemGroup>
 </Project>
