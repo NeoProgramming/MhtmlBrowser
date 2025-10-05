@@ -53,6 +53,7 @@ private slots:
 	void selectSourceFolder();
 	void selectCategoriesRootFolder();
 	void deleteCurrentFile();
+	void moveToCustomFolder();
 	void updateWindowTitle();
 
 private:
@@ -67,6 +68,7 @@ private:
 	QString findNextUnprocessedFile();
 	void loadMhtmlFile(const QString &filePath);
 	void setCategoriesRootPath(const QString &path);
+	void moveCurrentFileToFolder(const QString &destinationFolder);
 	void readSettings();
 	void writeSettings();
 private:
@@ -86,7 +88,7 @@ private:
 	QDockWidget *m_sidebarDock;
 	QTreeView *m_categoryTree;
 	QLineEdit *m_tagsEdit;
-	QString m_currentArticlePath;
+	QString m_currentFilePath;
 	QString m_sourceFolder;
 	QString m_categoriesRootFolder;
 	QFileSystemModel *m_categoriesModel;

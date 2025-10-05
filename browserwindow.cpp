@@ -220,6 +220,11 @@ QMenu *BrowserWindow::createFileMenu(TabWidget *tabWidget)
 	connect(openCategoriesRootAction, &QAction::triggered, this, &BrowserWindow::selectCategoriesRootFolder);
 	fileMenu->addAction(openCategoriesRootAction);
 
+	// Action для перемещения в произвольную папку
+	QAction *moveToCustomFolderAction = new QAction(tr("Move to Custom Folder..."), this);
+	connect(moveToCustomFolderAction, &QAction::triggered, this, &BrowserWindow::moveToCustomFolder);
+	fileMenu->addAction(moveToCustomFolderAction);
+
 	// Action для удаления текущего файла
 	QAction *deleteFileAction = new QAction(tr("&Delete File"), this);
 	connect(deleteFileAction, &QAction::triggered, this, &BrowserWindow::deleteCurrentFile);
@@ -622,7 +627,7 @@ void BrowserWindow::moveCurrentArticle()
 QString BrowserWindow::getCurrentArticlePath() const
 {
 	// Получаем путь текущей загруженной статьи
-	return m_currentArticlePath;
+	return m_currentFilePath;
 }
 
 void BrowserWindow::loadNextUnprocessedFile()
@@ -635,7 +640,7 @@ void BrowserWindow::loadNextUnprocessedFile()
 		// Нет больше файлов
 		currentTab()->setHtml("<h1>All files processed!</h1>");
 		statusBar()->showMessage(tr("All files processed - no more articles"));
-		m_currentArticlePath.clear();
+		m_currentFilePath.clear();
 	}
 }
 
@@ -702,7 +707,7 @@ void BrowserWindow::loadMhtmlFile(const QString &filePath)
 	}
 
 	// Сохраняем путь к текущему файлу
-	m_currentArticlePath = filePath;
+	m_currentFilePath = filePath;
 
 	// Прямая загрузка через file:// URL
 	QUrl fileUrl = QUrl::fromLocalFile(filePath);
@@ -790,14 +795,14 @@ void BrowserWindow::writeSettings()
 
 void BrowserWindow::deleteCurrentFile()
 {
-	if (m_currentArticlePath.isEmpty()) {
+	if (m_currentFilePath.isEmpty()) {
 		QMessageBox::information(this,
 			tr("No File"),
 			tr("No file is currently loaded."));
 		return;
 	}
 
-	QFileInfo fileInfo(m_currentArticlePath);
+	QFileInfo fileInfo(m_currentFilePath);
 
 	// Диалог подтверждения
 	QMessageBox::StandardButton reply = QMessageBox::question(
@@ -811,7 +816,7 @@ void BrowserWindow::deleteCurrentFile()
 
 	if (reply == QMessageBox::Yes) {
 		// Пытаемся удалить файл
-		if (QFile::remove(m_currentArticlePath)) {
+		if (QFile::remove(m_currentFilePath)) {
 			statusBar()->showMessage(tr("File deleted: %1").arg(fileInfo.fileName()), 3000);
 
 			// Загружаем следующий файл
@@ -820,7 +825,81 @@ void BrowserWindow::deleteCurrentFile()
 		else {
 			QMessageBox::warning(this,
 				tr("Delete Failed"),
-				tr("Failed to delete the file:\n%1").arg(m_currentArticlePath));
+				tr("Failed to delete the file:\n%1").arg(m_currentFilePath));
 		}
+	}
+}
+
+void BrowserWindow::moveToCustomFolder()
+{
+	if (m_currentFilePath.isEmpty()) {
+		QMessageBox::information(this,
+			tr("No File"),
+			tr("No file is currently loaded."));
+		return;
+	}
+
+	// Диалог выбора папки без ограничений
+	QString selectedFolder = QFileDialog::getExistingDirectory(
+		this,
+		tr("Select Destination Folder"),
+		QDir::homePath(),  // Начинаем с домашней папки
+		QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
+	);
+
+	if (!selectedFolder.isEmpty()) {
+		moveCurrentFileToFolder(selectedFolder);
+	}
+}
+
+void BrowserWindow::moveCurrentFileToFolder(const QString &destinationFolder)
+{
+	if (m_currentFilePath.isEmpty()) return;
+
+	QFileInfo currentFileInfo(m_currentFilePath);
+	QString destinationPath = QDir(destinationFolder).absoluteFilePath(currentFileInfo.fileName());
+
+	// Проверяем, не пытаемся ли переместить файл в ту же папку
+	if (QDir::cleanPath(m_currentFilePath) == QDir::cleanPath(destinationPath)) {
+		QMessageBox::information(this,
+			tr("Same Folder"),
+			tr("File is already in the selected folder."));
+		return;
+	}
+
+	// Проверяем, существует ли файл с таким именем в целевой папке
+	if (QFile::exists(destinationPath)) {
+		QMessageBox::StandardButton reply = QMessageBox::question(
+			this,
+			tr("File Exists"),
+			tr("A file with the same name already exists in the destination folder:\n%1\n\nOverwrite?")
+			.arg(destinationPath),
+			QMessageBox::Yes | QMessageBox::No,
+			QMessageBox::No
+		);
+
+		if (reply != QMessageBox::Yes) {
+			return;
+		}
+	}
+
+	// Перемещаем файл
+	if (QFile::rename(m_currentFilePath, destinationPath)) {
+		// Сохраняем теги если нужно
+	//	if (!m_tagsEdit->text().isEmpty()) {
+	//		saveArticleTags(destinationPath, m_tagsEdit->text());
+	//	}
+	//	m_tagsEdit->clear();
+
+		statusBar()->showMessage(tr("File moved to: %1").arg(destinationFolder), 3000);
+
+		// Загружаем следующий файл
+		loadNextUnprocessedFile();
+	}
+	else {
+		QMessageBox::warning(this,
+			tr("Move Failed"),
+			tr("Failed to move the file to:\n%1\n\nCheck permissions or if file is in use.")
+			.arg(destinationFolder));
 	}
 }
