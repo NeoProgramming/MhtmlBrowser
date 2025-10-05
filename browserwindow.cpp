@@ -214,15 +214,19 @@ QMenu *BrowserWindow::createFileMenu(TabWidget *tabWidget)
 
 	// Action для выбора папки с исходными файлами
 	QAction *openSourceFolderAction = new QAction(tr("Select Source Folder..."), this);
-	openSourceFolderAction->setShortcut(tr("Ctrl+O"));
 	connect(openSourceFolderAction, &QAction::triggered, this, &BrowserWindow::selectSourceFolder);
 	fileMenu->addAction(openSourceFolderAction);
 
 	// Action для выбора корневой папки категорий
 	QAction *openCategoriesRootAction = new QAction(tr("Select Categories Root..."), this);
-	openCategoriesRootAction->setShortcut(tr("Ctrl+Shift+O"));
 	connect(openCategoriesRootAction, &QAction::triggered, this, &BrowserWindow::selectCategoriesRootFolder);
 	fileMenu->addAction(openCategoriesRootAction);
+
+	// Action для удаления текущего файла
+	QAction *deleteFileAction = new QAction(tr("&Delete File"), this);
+	connect(deleteFileAction, &QAction::triggered, this, &BrowserWindow::deleteCurrentFile);
+	fileMenu->addSeparator();
+	fileMenu->addAction(deleteFileAction);
 
     fileMenu->addSeparator();
 
@@ -833,4 +837,41 @@ void BrowserWindow::writeSettings()
 	QSettings settings;
 	settings.setValue("sourceFolder", m_sourceFolder);
 	settings.setValue("categoriesRootFolder", m_categoriesRootFolder);
+}
+
+void BrowserWindow::deleteCurrentFile()
+{
+	if (m_currentArticlePath.isEmpty()) {
+		QMessageBox::information(this,
+			tr("No File"),
+			tr("No file is currently loaded."));
+		return;
+	}
+
+	QFileInfo fileInfo(m_currentArticlePath);
+
+	// Диалог подтверждения
+	QMessageBox::StandardButton reply = QMessageBox::question(
+		this,
+		tr("Confirm Delete"),
+		tr("Are you sure you want to delete the file:\n\"%1\"?\n\nThis action cannot be undone.")
+		.arg(fileInfo.fileName()),
+		QMessageBox::Yes | QMessageBox::No,
+		QMessageBox::No
+	);
+
+	if (reply == QMessageBox::Yes) {
+		// Пытаемся удалить файл
+		if (QFile::remove(m_currentArticlePath)) {
+			statusBar()->showMessage(tr("File deleted: %1").arg(fileInfo.fileName()), 3000);
+
+			// Загружаем следующий файл
+			loadNextUnprocessedFile();
+		}
+		else {
+			QMessageBox::warning(this,
+				tr("Delete Failed"),
+				tr("Failed to delete the file:\n%1").arg(m_currentArticlePath));
+		}
+	}
 }

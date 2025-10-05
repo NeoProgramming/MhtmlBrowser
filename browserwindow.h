@@ -51,6 +51,7 @@ private slots:
 	void moveCurrentArticle();
 	void selectSourceFolder();
 	void selectCategoriesRootFolder();
+	void deleteCurrentFile();
 	void updateWindowTitle();
 private:
     QMenu *createFileMenu(TabWidget *tabWidget);
