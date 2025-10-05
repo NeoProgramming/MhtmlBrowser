@@ -34,9 +34,7 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile, bool 
     : m_browser(browser)
     , m_profile(profile)
     , m_tabWidget(new TabWidget(profile, this))
-    , m_progressBar(nullptr)
-    , m_historyBackAction(nullptr)
-    , m_historyForwardAction(nullptr)
+    , m_progressBar(nullptr)    
     , m_stopAction(nullptr)
     , m_reloadAction(nullptr)
     , m_stopReloadAction(nullptr)
@@ -401,45 +399,7 @@ QToolBar *BrowserWindow::createToolBar()
 {
     QToolBar *navigationBar = new QToolBar(tr("Navigation"));
     navigationBar->setMovable(false);
-    navigationBar->toggleViewAction()->setEnabled(false);
-
-    m_historyBackAction = new QAction(this);
-    QList<QKeySequence> backShortcuts = QKeySequence::keyBindings(QKeySequence::Back);
-    for (auto it = backShortcuts.begin(); it != backShortcuts.end();) {
-        // Chromium already handles navigate on backspace when appropriate.
-        if ((*it)[0] == Qt::Key_Backspace)
-            it = backShortcuts.erase(it);
-        else
-            ++it;
-    }
-    // For some reason Qt doesn't bind the dedicated Back key to Back.
-    backShortcuts.append(QKeySequence(Qt::Key_Back));
-    m_historyBackAction->setShortcuts(backShortcuts);
-    m_historyBackAction->setIconVisibleInMenu(false);
-    m_historyBackAction->setIcon(QIcon(QStringLiteral(":go-previous.png")));
-    m_historyBackAction->setToolTip(tr("Go back in history"));
-    connect(m_historyBackAction, &QAction::triggered, [this]() {
-        m_tabWidget->triggerWebPageAction(QWebEnginePage::Back);
-    });
-    navigationBar->addAction(m_historyBackAction);
-
-    m_historyForwardAction = new QAction(this);
-    QList<QKeySequence> fwdShortcuts = QKeySequence::keyBindings(QKeySequence::Forward);
-    for (auto it = fwdShortcuts.begin(); it != fwdShortcuts.end();) {
-        if (((*it)[0] & Qt::Key_unknown) == Qt::Key_Backspace)
-            it = fwdShortcuts.erase(it);
-        else
-            ++it;
-    }
-    fwdShortcuts.append(QKeySequence(Qt::Key_Forward));
-    m_historyForwardAction->setShortcuts(fwdShortcuts);
-    m_historyForwardAction->setIconVisibleInMenu(false);
-    m_historyForwardAction->setIcon(QIcon(QStringLiteral(":go-next.png")));
-    m_historyForwardAction->setToolTip(tr("Go forward in history"));
-    connect(m_historyForwardAction, &QAction::triggered, [this]() {
-        m_tabWidget->triggerWebPageAction(QWebEnginePage::Forward);
-    });
-    navigationBar->addAction(m_historyForwardAction);
+    navigationBar->toggleViewAction()->setEnabled(false);	    
 
     m_stopReloadAction = new QAction(this);
     connect(m_stopReloadAction, &QAction::triggered, [this]() {
@@ -452,24 +412,13 @@ QToolBar *BrowserWindow::createToolBar()
     m_urlLineEdit->addAction(m_favAction, QLineEdit::LeadingPosition);
     m_urlLineEdit->setClearButtonEnabled(true);
     navigationBar->addWidget(m_urlLineEdit);
-
-    auto downloadsAction = new QAction(this);
-    downloadsAction->setIcon(QIcon(QStringLiteral(":go-bottom.png")));
-    downloadsAction->setToolTip(tr("Show downloads"));
-    navigationBar->addAction(downloadsAction);
-   
+	   
     return navigationBar;
 }
 
 void BrowserWindow::handleWebActionEnabledChanged(QWebEnginePage::WebAction action, bool enabled)
 {
     switch (action) {
-    case QWebEnginePage::Back:
-        m_historyBackAction->setEnabled(enabled);
-        break;
-    case QWebEnginePage::Forward:
-        m_historyForwardAction->setEnabled(enabled);
-        break;
     case QWebEnginePage::Reload:
         m_reloadAction->setEnabled(enabled);
         break;

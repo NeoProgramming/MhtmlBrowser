@@ -6,6 +6,7 @@
 #include <QTime>
 #include <QWebEnginePage>
 
+
 QT_BEGIN_NAMESPACE
 class QLineEdit;
 class QProgressBar;
@@ -53,6 +54,7 @@ private slots:
 	void selectCategoriesRootFolder();
 	void deleteCurrentFile();
 	void updateWindowTitle();
+
 private:
     QMenu *createFileMenu(TabWidget *tabWidget);
     QMenu *createEditMenu();
@@ -72,8 +74,7 @@ private:
     QWebEngineProfile *m_profile;
     TabWidget *m_tabWidget;
     QProgressBar *m_progressBar;
-    QAction *m_historyBackAction;
-    QAction *m_historyForwardAction;
+
     QAction *m_stopAction;
     QAction *m_reloadAction;
     QAction *m_stopReloadAction;

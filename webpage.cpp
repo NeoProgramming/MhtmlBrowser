@@ -8,6 +8,7 @@
 #include <QStyle>
 #include <QTimer>
 #include <QWebEngineCertificateError>
+#include <QDesktopServices>
 
 WebPage::WebPage(QWebEngineProfile *profile, QObject *parent)
     : QWebEnginePage(profile, parent)
@@ -76,3 +77,27 @@ void WebPage::handleSelectClientCertificate(QWebEngineClientCertificateSelection
     selection.select(selection.certificates().at(0));
 }
 #endif
+
+bool WebPage::acceptNavigationRequest(const QUrl &url, NavigationType type, bool isMainFrame)
+{
+	Q_UNUSED(type)
+		Q_UNUSED(isMainFrame)
+
+		// Разрешаем навигацию только для локальных файлов и данных
+		if (url.isLocalFile() ||
+			url.scheme().startsWith("file") ||
+			url.scheme().isEmpty() ||
+			url.scheme().startsWith("data")) {
+			return true;
+		}
+
+	// Внешние HTTP/HTTPS ссылки открываем в системном браузере
+	if (url.scheme().startsWith("http") ||
+		url.scheme() == "mailto" ||
+		url.scheme() == "ftp" ||
+		url.scheme() == "news") {
+		QDesktopServices::openUrl(url);
+	}
+
+	return false; // Блокируем навигацию в QWebEngineView
+}

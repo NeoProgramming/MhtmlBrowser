@@ -19,6 +19,8 @@ private slots:
 #if !defined(QT_NO_SSL) || QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
     void handleSelectClientCertificate(QWebEngineClientCertificateSelection clientCertSelection);
 #endif
+protected:
+	bool acceptNavigationRequest(const QUrl &url, NavigationType type, bool isMainFrame) override;
 };
 
 #endif // WEBPAGE_H
