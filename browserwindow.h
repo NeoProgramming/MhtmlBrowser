@@ -63,7 +63,6 @@ private:
     QMenu *createWindowMenu(TabWidget *tabWidget);
     QMenu *createHelpMenu();
     QToolBar *createToolBar();
-	QString getCurrentArticlePath() const;
 	void loadNextUnprocessedFile();
 	QString findNextUnprocessedFile();
 	void loadMhtmlFile(const QString &filePath);
@@ -71,6 +70,8 @@ private:
 	void moveCurrentFileToFolder(const QString &destinationFolder);
 	void readSettings();
 	void writeSettings();
+	QString generateUniqueFileName(const QString &destinationFolder, const QString &originalFileName);
+
 private:
     Browser *m_browser;
     QWebEngineProfile *m_profile;

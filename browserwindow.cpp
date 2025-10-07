@@ -594,8 +594,7 @@ void BrowserWindow::createNewCategory()
 
 void BrowserWindow::moveCurrentArticle()
 {
-	QString currentArticle = getCurrentArticlePath();
-	if (currentArticle.isEmpty()) return;
+	if (m_currentFilePath.isEmpty()) return;
 
 	// Получаем выбранную папку в дереве
 	QModelIndex selectedIndex = m_categoryTree->currentIndex();
@@ -610,24 +609,20 @@ void BrowserWindow::moveCurrentArticle()
 		destinationPath = destInfo.path();
 	}
 
-	// Перемещаем файл
-	QFileInfo articleInfo(currentArticle);
-	QString newPath = destinationPath + "/" + articleInfo.fileName();
+	moveCurrentFileToFolder(destinationPath);
 
-	if (QFile::rename(currentArticle, newPath)) {
-		// Загружаем следующую статью
-		loadNextUnprocessedFile();
-	}
-	else {
-		QMessageBox::warning(this, tr("Error"),
-			tr("Failed to move article"));
-	}
-}
-
-QString BrowserWindow::getCurrentArticlePath() const
-{
-	// Получаем путь текущей загруженной статьи
-	return m_currentFilePath;
+//	// Перемещаем файл
+//	QFileInfo articleInfo(currentArticle);
+//	QString newPath = destinationPath + "/" + articleInfo.fileName();
+//
+//	if (QFile::rename(currentArticle, newPath)) {
+//		// Загружаем следующую статью
+//		loadNextUnprocessedFile();
+//	}
+//	else {
+//		QMessageBox::warning(this, tr("Error"),
+//			tr("Failed to move article"));
+//	}
 }
 
 void BrowserWindow::loadNextUnprocessedFile()
@@ -852,12 +847,40 @@ void BrowserWindow::moveToCustomFolder()
 	}
 }
 
+QString BrowserWindow::generateUniqueFileName(const QString &destinationFolder, const QString &originalFileName)
+{
+	QFileInfo fileInfo(originalFileName);
+	QString baseName = fileInfo.completeBaseName(); // Имя без расширения
+	QString extension = fileInfo.suffix();
+
+	QString basePath = QDir(destinationFolder).absoluteFilePath(baseName);
+	QString newFilePath = basePath + "." + extension;
+
+	// Если файл с исходным именем не существует - возвращаем его
+	if (!QFile::exists(newFilePath)) {
+		return newFilePath;
+	}
+
+	// Ищем доступное имя с номером в скобках
+	int counter = 1;
+	do {
+		newFilePath = basePath + "(" + QString::number(counter) + ")." + extension;
+		counter++;
+	} while (QFile::exists(newFilePath) && counter < 1000); // Защита от бесконечного цикла
+
+	return newFilePath;
+}
+
 void BrowserWindow::moveCurrentFileToFolder(const QString &destinationFolder)
 {
 	if (m_currentFilePath.isEmpty()) return;
 
 	QFileInfo currentFileInfo(m_currentFilePath);
-	QString destinationPath = QDir(destinationFolder).absoluteFilePath(currentFileInfo.fileName());
+	QString originalFileName = currentFileInfo.fileName();
+	//QString destinationPath = QDir(destinationFolder).absoluteFilePath(currentFileInfo.fileName());
+	// Генерируем уникальное имя файла
+	QString destinationPath = generateUniqueFileName(destinationFolder, originalFileName);
+
 
 	// Проверяем, не пытаемся ли переместить файл в ту же папку
 	if (QDir::cleanPath(m_currentFilePath) == QDir::cleanPath(destinationPath)) {
@@ -866,30 +889,10 @@ void BrowserWindow::moveCurrentFileToFolder(const QString &destinationFolder)
 			tr("File is already in the selected folder."));
 		return;
 	}
-
-	// Проверяем, существует ли файл с таким именем в целевой папке
-	if (QFile::exists(destinationPath)) {
-		QMessageBox::StandardButton reply = QMessageBox::question(
-			this,
-			tr("File Exists"),
-			tr("A file with the same name already exists in the destination folder:\n%1\n\nOverwrite?")
-			.arg(destinationPath),
-			QMessageBox::Yes | QMessageBox::No,
-			QMessageBox::No
-		);
-
-		if (reply != QMessageBox::Yes) {
-			return;
-		}
-	}
+	
 
 	// Перемещаем файл
 	if (QFile::rename(m_currentFilePath, destinationPath)) {
-		// Сохраняем теги если нужно
-	//	if (!m_tagsEdit->text().isEmpty()) {
-	//		saveArticleTags(destinationPath, m_tagsEdit->text());
-	//	}
-	//	m_tagsEdit->clear();
 
 		statusBar()->showMessage(tr("File moved to: %1").arg(destinationFolder), 3000);
 
