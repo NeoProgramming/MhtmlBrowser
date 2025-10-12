@@ -250,10 +250,6 @@
     <None Include="data\AppLogoColor.png" />
     <None Include="data\3rdparty\dialog-error.png" />
     <None Include="data\3rdparty\edit-clear.png" />
-    <None Include="data\3rdparty\go-bottom.png" />
-    <None Include="data\3rdparty\go-next.png" />
-    <None Include="data\3rdparty\go-previous.png" />
-    <None Include="data\ninja.png" />
     <None Include="data\3rdparty\process-stop.png" />
     <QtRcc Include="data\mhtmlbrowser.qrc">
     </QtRcc>

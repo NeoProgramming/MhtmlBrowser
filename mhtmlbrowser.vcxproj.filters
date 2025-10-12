@@ -107,18 +107,6 @@
     <None Include="data\3rdparty\edit-clear.png">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="data\3rdparty\go-bottom.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="data\3rdparty\go-next.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="data\3rdparty\go-previous.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="data\ninja.png">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="data\3rdparty\process-stop.png">
       <Filter>Resource Files</Filter>
     </None>

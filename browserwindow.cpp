@@ -408,6 +408,7 @@ QToolBar *BrowserWindow::createToolBar()
 
     m_stopReloadAction = new QAction(this);
     connect(m_stopReloadAction, &QAction::triggered, [this]() {
+		loadNextUnprocessedFile();
         m_tabWidget->triggerWebPageAction(QWebEnginePage::WebAction(m_stopReloadAction->data().toInt()));
     });
     navigationBar->addAction(m_stopReloadAction);
