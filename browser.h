@@ -15,8 +15,6 @@ public:
     QVector<BrowserWindow*> windows() { return m_windows; }
 
     BrowserWindow *createWindow(bool offTheRecord = false);
-    BrowserWindow *createDevToolsWindow();
-
 
 private:
     QVector<BrowserWindow*> m_windows;

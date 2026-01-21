@@ -24,7 +24,7 @@ class BrowserWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    BrowserWindow(Browser *browser, QWebEngineProfile *profile, bool forDevTools = false);
+    BrowserWindow(Browser *browser, QWebEngineProfile *profile);
 	~BrowserWindow();
     QSize sizeHint() const override;
     TabWidget *tabWidget() const;
@@ -43,7 +43,7 @@ private slots:
     void handleWebViewLoadProgress(int);
     void handleWebViewTitleChanged(const QString &title);
     void handleWebActionEnabledChanged(QWebEnginePage::WebAction action, bool enabled);
-    void handleDevToolsRequested(QWebEnginePage *source);
+
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     void handleFindTextFinished(const QWebEngineFindTextResult &result);
 #endif
@@ -84,6 +84,7 @@ private:
     QLineEdit *m_urlLineEdit;
     QAction *m_favAction;
     QString m_lastSearch;
+
 	QLabel *m_labSrc;
 	QLabel *m_labDst;
 	QDockWidget *m_sidebarDock;
