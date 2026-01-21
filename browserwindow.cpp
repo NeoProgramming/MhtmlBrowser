@@ -91,6 +91,13 @@ BrowserWindow::BrowserWindow(Browser *browser, QWebEngineProfile *profile, bool 
 	m_categoriesModel->setRootPath(m_categoriesRootFolder);
 	m_categoryTree->setModel(m_categoriesModel);
 	m_categoryTree->setRootIndex(m_categoriesModel->index(m_categoriesRootFolder));
+	// Голубой цвет для выделения без фокуса
+	QString styleSheet =
+		"QTreeView::item:selected:!active {"
+		"    background-color: #2196F3;"
+		"    color: #000000;"
+		"}";
+	m_categoryTree->setStyleSheet(styleSheet);
 	
 	// Подключаем сигналы
 	connect(newCategoryBtn, &QPushButton::clicked, this, &BrowserWindow::createNewCategory);
@@ -408,8 +415,12 @@ QToolBar *BrowserWindow::createToolBar()
 
     m_stopReloadAction = new QAction(this);
     connect(m_stopReloadAction, &QAction::triggered, [this]() {
-		loadNextUnprocessedFile();
+		
         m_tabWidget->triggerWebPageAction(QWebEnginePage::WebAction(m_stopReloadAction->data().toInt()));
+		
+		// загружаем новый файл
+		loadNextUnprocessedFile();
+
     });
     navigationBar->addAction(m_stopReloadAction);
 

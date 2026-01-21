@@ -143,7 +143,7 @@
       <Command>copy $(TargetPath) E:\MySoft\_Files\MhtmlBrowser\mhtmlbrowser.exe</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>copying release exe...</Message>
+      <Message>copying release exe to E:\MySoft\_Files\MhtmlBrowser\...</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
