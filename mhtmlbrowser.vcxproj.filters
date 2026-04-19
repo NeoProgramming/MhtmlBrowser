@@ -47,16 +47,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="browser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="browserwindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tabwidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="webpage.cpp">
@@ -70,13 +64,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="browser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <QtMoc Include="browserwindow.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="tabwidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="webpage.h">

@@ -24,6 +24,7 @@ protected:
     QWebEngineView *createWindow(QWebEnginePage::WebWindowType type) override;
 
 signals:
+	void webLoadProgress(int progress);
     void webActionEnabledChanged(QWebEnginePage::WebAction webAction, bool enabled);
     void favIconChanged(const QIcon &icon);
     void devToolsRequested(QWebEnginePage *source);

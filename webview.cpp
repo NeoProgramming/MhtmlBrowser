@@ -1,7 +1,5 @@
 
-#include "browser.h"
 #include "browserwindow.h"
-#include "tabwidget.h"
 #include "webpage.h"
 #include "webview.h"
 #include <QContextMenuEvent>
@@ -20,6 +18,7 @@ WebView::WebView(QWidget *parent)
     });
     connect(this, &QWebEngineView::loadProgress, [this](int progress) {
         m_loadProgress = progress;
+		emit webLoadProgress(progress);
     });
     connect(this, &QWebEngineView::loadFinished, [this](bool success) {
         m_loadProgress = success ? 100 : -1;
@@ -101,22 +100,13 @@ QIcon WebView::favIcon() const
 
 QWebEngineView *WebView::createWindow(QWebEnginePage::WebWindowType type)
 {
-    BrowserWindow *mainWindow = qobject_cast<BrowserWindow*>(window());
-    if (!mainWindow)
-        return nullptr;
+	Q_UNUSED(type)
 
-    switch (type) {
-    case QWebEnginePage::WebBrowserTab: {
-        return mainWindow->tabWidget()->createTab();
-    }
-    case QWebEnginePage::WebBrowserBackgroundTab: {
-        return mainWindow->tabWidget()->createBackgroundTab();
-    }
-    case QWebEnginePage::WebBrowserWindow: {
-        return mainWindow->browser()->createWindow()->currentTab();
-    }
-    }
-    return nullptr;
+	// Получаем URL, который пытаются открыть
+	// (нужно сохранить его где-то или перехватить по-другому)
+
+	// Просто игнорируем создание новых окон
+	return nullptr;
 }
 
 void WebView::contextMenuEvent(QContextMenuEvent *event)

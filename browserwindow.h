@@ -13,7 +13,6 @@ class QProgressBar;
 QT_END_NAMESPACE
 
 class Browser;
-class TabWidget;
 class WebView;
 class QTreeView;
 class QFileSystemModel;
@@ -24,29 +23,20 @@ class BrowserWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    BrowserWindow(Browser *browser, QWebEngineProfile *profile);
+    BrowserWindow(QWebEngineProfile *profile);
 	~BrowserWindow();
     QSize sizeHint() const override;
-    TabWidget *tabWidget() const;
-    WebView *currentTab() const;
-    Browser *browser() { return m_browser; }
-
+    WebView *currentView() const;
+  
 protected:
     void closeEvent(QCloseEvent *event) override;
 
 private slots:
-    void handleNewWindowTriggered();
-    void handleNewIncognitoWindowTriggered();
+
     void handleFileOpenTriggered();
-    void handleFindActionTriggered();
-    void handleShowWindowTriggered();
     void handleWebViewLoadProgress(int);
     void handleWebViewTitleChanged(const QString &title);
     void handleWebActionEnabledChanged(QWebEnginePage::WebAction action, bool enabled);
-
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-    void handleFindTextFinished(const QWebEngineFindTextResult &result);
-#endif
 
 	void createNewCategory();
 	void moveCurrentArticle();
@@ -57,10 +47,8 @@ private slots:
 	void updateWindowTitle();
 
 private:
-    QMenu *createFileMenu(TabWidget *tabWidget);
-    QMenu *createEditMenu();
-    QMenu *createViewMenu(QToolBar *toolBar);
-    QMenu *createWindowMenu(TabWidget *tabWidget);
+    QMenu *createFileMenu();
+    QMenu *createViewMenu(QToolBar *toolBar);   
     QMenu *createHelpMenu();
     QToolBar *createToolBar();
 	void loadNextUnprocessedFile();
@@ -73,9 +61,8 @@ private:
 	QString generateUniqueFileName(const QString &destinationFolder, const QString &originalFileName);
 
 private:
-    Browser *m_browser;
     QWebEngineProfile *m_profile;
-    TabWidget *m_tabWidget;
+	WebView *m_webView;
     QProgressBar *m_progressBar;
 
     QAction *m_stopAction;
@@ -85,15 +72,17 @@ private:
     QAction *m_favAction;
     QString m_lastSearch;
 
-	QLabel *m_labSrc;
-	QLabel *m_labDst;
-	QDockWidget *m_sidebarDock;
-	QTreeView *m_categoryTree;
-	QLineEdit *m_tagsEdit;
-	QString m_currentFilePath;
-	QString m_sourceFolder;
-	QString m_categoriesRootFolder;
-	QFileSystemModel *m_categoriesModel;
+	QLabel *m_labSrc;	// папка-источник сортируемого контента
+	QLabel *m_labDst;	// корнева€ папка дл€ дерева, в которое мы перемещаем контент
+	QDockWidget *m_sidebarDock; // докинг-панель
+	QTreeView *m_categoryTree;  // визуальное дерево папок, в которые мы перемещаем контент
+	QFileSystemModel *m_categoriesModel;	// модель файловой системы дл€ дерева папок, в которые мы перемещаем контент
+
+	QString m_currentFilePath;	// путь к текущему объекту контента
+	QString m_sourceFolder;		// 
+	QString m_categoriesRootFolder;		
+
+//	QLineEdit *m_tagsEdit;		// 
 };
 
 #endif // BROWSERWINDOW_H

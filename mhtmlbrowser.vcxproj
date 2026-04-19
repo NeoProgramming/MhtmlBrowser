@@ -207,21 +207,16 @@
     </QtUic>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="browser.cpp" />
     <ClCompile Include="browserwindow.cpp" />
     <ClCompile Include="emptyfoldersfilesystemmodel.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="tabwidget.cpp" />
     <ClCompile Include="webpage.cpp" />
     <ClCompile Include="webview.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="browser.h" />
     <ClInclude Include="resource.h" />
     <QtMoc Include="emptyfoldersfilesystemmodel.h" />
     <QtMoc Include="browserwindow.h">
-    </QtMoc>
-    <QtMoc Include="tabwidget.h">
     </QtMoc>
     <QtMoc Include="webpage.h">
     </QtMoc>

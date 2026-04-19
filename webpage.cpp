@@ -1,6 +1,5 @@
 
 #include "browserwindow.h"
-#include "tabwidget.h"
 #include "webpage.h"
 #include "webview.h"
 #include <QAuthenticator>
@@ -81,15 +80,20 @@ void WebPage::handleSelectClientCertificate(QWebEngineClientCertificateSelection
 bool WebPage::acceptNavigationRequest(const QUrl &url, NavigationType type, bool isMainFrame)
 {
 	Q_UNUSED(type)
-		Q_UNUSED(isMainFrame)
+	Q_UNUSED(isMainFrame)
 
-		// Разрешаем навигацию только для локальных файлов и данных
-		if (url.isLocalFile() ||
-			url.scheme().startsWith("file") ||
-			url.scheme().isEmpty() ||
-			url.scheme().startsWith("data")) {
-			return true;
-		}
+	// Разрешаем навигацию только для локальных файлов и данных
+	if (url.isLocalFile() ||
+		url.scheme().startsWith("file") ||
+		url.scheme().isEmpty() ||
+		url.scheme().startsWith("data")) {
+		return true;
+	}
+
+	// Разрешаем только локальные файлы
+	if (url.isLocalFile() || url.scheme() == "file" || url.scheme() == "data") {
+		return true;
+	}
 
 	// Внешние HTTP/HTTPS ссылки открываем в системном браузере
 	if (url.scheme().startsWith("http") ||
